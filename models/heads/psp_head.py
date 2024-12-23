@@ -12,7 +12,10 @@ class PSPHead(nn.Module):
         super(PSPHead, self).__init__()
         self.ppm = PyramidPoolingModule(in_channels, channels, pool_sizes)
         self.bottleneck = nn.Conv2d(
-            in_channels + len(pool_sizes) * channels, channels, kernel_size=1
+            in_channels=in_channels + len(pool_sizes) * channels,
+            out_channels=channels,
+            kernel_size=3,
+            padding=1,
         )
 
     def forward(self, x: Tensor) -> Tensor:
@@ -25,7 +28,10 @@ class PyramidPoolingModule(nn.Module):
     """Pyramid Pooling Module used in PSPNet."""
 
     def __init__(
-        self, in_channels: int, channels: int, pool_sizes: tuple = (1, 2, 3, 6)
+        self,
+        in_channels: int,
+        channels: int,
+        pool_sizes: tuple[int, ...] = (1, 2, 3, 6),
     ):
         super(PyramidPoolingModule, self).__init__()
         self.stages = nn.ModuleList(
